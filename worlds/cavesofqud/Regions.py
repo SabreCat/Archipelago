@@ -81,8 +81,8 @@ def add_static_locations(world: "CoQWorld"):
         quest_loc.access_rule = lambda state, quest=quest: Items.has_enough_stats_for_level(
             quest.min_level, state, world
         )
-        quest_loc.progress_type = LocationProgressType.DEFAULT if (quest.type == "delivery"
-            ) else LocationProgressType.PRIORITY
+        quest_loc.progress_type = LocationProgressType.PRIORITY if (quest.type == "lore"
+            ) else LocationProgressType.DEFAULT
         region.locations += [quest_loc]
 
 def create_regions(world: "CoQWorld"):

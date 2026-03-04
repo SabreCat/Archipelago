@@ -2,7 +2,7 @@
     "Joppa": {
         "parent": "Menu",
         "levelStart": 1,
-        "levelEnd": 5
+        "levelEnd": 6
     },
     "Red Rock": {
         "parent": "Joppa",
@@ -25,19 +25,19 @@
     "Grit Gate": {
         "parent": "Rust Wells",
         "unlock": "Weirdwire Fusor",
-        "levelStart": 9,
+        "levelStart": 8,
         "levelEnd": 10
     },
     "Golgotha": {
         "parent": "Grit Gate",
         "unlock": "Barathrumite Token",
-        "levelStart": 11,
+        "levelStart": 10,
         "levelEnd": 12
     },
     "Grit Gate 2": {
         "parent": "Golgotha",
         "unlock": "Waydroid Repair Kit",
-        "levelStart": 13,
+        "levelStart": 12,
         "levelEnd": 15
     },
     "Kyakukya": {
@@ -47,24 +47,24 @@
     "Bethesda Susa": {
         "parent": "Grit Gate 2",
         "unlock": "Eschaton Transcoder",
-        "levelStart": 16,
+        "levelStart": 15,
         "levelEnd": 18
     },
     "Bethesda Susa 2": {
         "parent": "Bethesda Susa",
         "unlock": "Baetyl Optronic Adapter",
-        "levelStart": 19,
+        "levelStart": 18,
         "levelEnd": 20
     },
     "Omonporch": {
         "parent": "Bethesda Susa 2",
         "unlock": "Consortium Token",
-        "levelStart": 21,
+        "levelStart": 20,
         "levelEnd": 25
     },
     "Postgame": {
         "parent": "Omonporch",
-        "levelStart": 26,
+        "levelStart": 25,
         "levelEnd": 50
     }
 }
