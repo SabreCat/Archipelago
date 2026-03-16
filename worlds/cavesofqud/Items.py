@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple
 
 from BaseClasses import CollectionState, Item, ItemClassification
 
-from . import Quests
+from . import Options, Quests
 
 if TYPE_CHECKING:
     from . import CoQWorld
@@ -35,9 +35,11 @@ stat_items = [
     "Hit Points",
     "Attribute Point",
     "Attribute Bonus",
-    "Mutation Point",
     "Skill Points",
+    "Mutation Point",
     "Rapid Mutation Advancement",
+    "License Points",
+    "Cybernetic Implant",
 ]
 
 unlock_items = [
@@ -65,9 +67,9 @@ def levelup_levels(max_level: int) -> list[int]:
     return [level for level in range(2, max_level + 1)]
 
 
-def stat_items_total(max_level: int) -> int:
+def stat_items_total(max_level: int, world: "CoQWorld") -> int:
     return sum(
-        [len(stat_items_on_levelup(level)) for level in levelup_levels(max_level)]
+        [len(stat_items_on_levelup(level, world)) for level in levelup_levels(max_level)]
     )
 
 
@@ -79,24 +81,30 @@ def has_enough_stats_for_level(
     level: int, state: CollectionState, world: "CoQWorld"
 ) -> bool:
     return stat_items_count(state, world.player) / stat_items_total(
-        Quests.max_level(world)
+        Quests.max_level(world), world
     ) >= (level - 1) / Quests.max_level(world)
 
 
-def stat_items_on_levelup(level: int) -> list[str]:
-    items = ["Hit Points", "Mutation Point", "Skill Points"]
+def stat_items_on_levelup(level: int, world: "CoQWorld") -> list[str]:
+    items = ["Hit Points", "Skill Points"]
     if (level + 3) % 6 == 0:
         items.append("Attribute Point")
     if (level + 6) % 6 == 0:
         items.append("Attribute Bonus")
-    if (level + 5) % 10 == 0:
-        items.append("Rapid Mutation Advancement")
-
+    if world.options.genotype == Options.Genotype.option_mutant:
+        items.append("Mutation Point")
+        if (level + 5) % 10 == 0:
+            items.append("Rapid Mutation Advancement")
+    if world.options.genotype == Options.Genotype.option_true_kin:
+        if level % 4 > 0:
+            items.append("Cybernetic Implant")
+        if level % 3 == 0:
+            items.append("License Points")
     return items
 
 
 def create_stat_items_on_levelup(world: "CoQWorld", level: int) -> list[CoQItem]:
-    items = stat_items_on_levelup(level)
+    items = stat_items_on_levelup(level, world)
     return [
         CoQItem(
             name,

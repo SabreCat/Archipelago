@@ -5,7 +5,6 @@ from Options import Choice, PerGameCommonOptions, Range, Toggle
 MAX_MAX_LEVEL = 50
 MAX_LOCATIONS_PER_LEVEL = 10
 
-
 class Goal(Choice):
     """
     Determines the win condition
@@ -19,6 +18,15 @@ class Goal(Choice):
     option_quest_a_call_to_arms = 4
     default = 2
 
+class Genotype(Choice):
+    """
+    Sets whether your character receives Mutation Points and Rapid Mutations (Mutant),
+    or License Points and Implants (True Kin).
+    """
+    display_name = "Genotype"
+    option_mutant = 0
+    option_true_kin = 1
+    default = 0
 
 class LocationsPerLevel(Range):
     """
@@ -33,7 +41,6 @@ class LocationsPerLevel(Range):
     range_end = MAX_LOCATIONS_PER_LEVEL
     default = 5
 
-
 class ExtraLocationLevels(Range):
     """
     Determines the number of extra levels with locations beyond the in-logic level for the final
@@ -46,7 +53,6 @@ class ExtraLocationLevels(Range):
     range_end = 20
     default = 5
 
-
 class TrapPercentage(Range):
     """
     Determines the percentage of filler items that are replaced by
@@ -57,7 +63,6 @@ class TrapPercentage(Range):
     range_start = 0
     range_end = 100
     default = 50
-
 
 class LostArtifacts(Toggle):
     """
@@ -70,6 +75,7 @@ class LostArtifacts(Toggle):
 @dataclass
 class CoQOptions(PerGameCommonOptions):
     goal: Goal
+    genotype: Genotype
     locations_per_level: LocationsPerLevel
     extra_location_levels: ExtraLocationLevels
     trap_percentage: TrapPercentage

@@ -260,5 +260,12 @@
         "type": "creatures",
         "population": "Tier4RuinsCreatures",
         "amount": 3
+    },
+    "Cybernetic Implant": {
+        "category": "progression",
+        "weight": 1,
+        "type": "randomItem",
+        "population": "APCybernetics",
+        "amount": 1
     }
 }
