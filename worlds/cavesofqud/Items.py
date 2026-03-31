@@ -31,6 +31,8 @@ static_items: Dict[str, CoQItemData] = {
     for name, item in json.loads(item_data).items()
 }
 
+main_quest_item = "Progressive Main Quest"
+
 stat_items = [
     "Hit Points",
     "Attribute Point",
@@ -44,19 +46,12 @@ stat_items = [
 
 unlock_items = [
     "Water Farmer Token",
-    "Ancient Knickknack",
-    "Prime Knickknack",
-    "Weirdwire Fusor",
     "Hindren Token",
-    "Barathrumite Token",
-    "Waydroid Repair Kit",
     "Kyakukya Token",
-    "Eschaton Transcoder",
-    "Baetyl Optronic Adapter",
-    "Consortium Token"
 ]
 
 all_items: Iterable[str] = [
+    main_quest_item,
     *stat_items,
     *[i for i in static_items.keys()],
     *unlock_items,
@@ -141,7 +136,20 @@ def create_items(world: "CoQWorld"):
     item_pool: List[CoQItem] = []
     total_locations = len(world.multiworld.get_unfilled_locations(world.player))
 
-    # Quest unlock items
+    # Progressive main quest
+    i = 1
+    while i <= Quests.goal_lookup[world.options.goal.value].progression:
+        item_pool += [
+            CoQItem(
+                main_quest_item,
+                ItemClassification.progression,
+                world.item_name_to_id[main_quest_item],
+                world.player,
+            )
+        ]
+        i += 1
+
+    # Side quest unlock items
     for item in unlock_items:
         item_pool += [
             CoQItem(

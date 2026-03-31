@@ -14,29 +14,34 @@
     },
     "Joppa 2": {
         "parent": "Joppa",
-        "unlock": "Ancient Knickknack"
+        "unlock": "Progressive Main Quest",
+        "quantity": 1
     },
     "Rust Wells": {
         "parent": "Joppa 2",
-        "unlock": "Prime Knickknack",
+        "unlock": "Progressive Main Quest",
+        "quantity": 2,
         "levelStart": 6,
         "levelEnd": 8
     },
     "Grit Gate": {
         "parent": "Rust Wells",
-        "unlock": "Weirdwire Fusor",
+        "unlock": "Progressive Main Quest",
+        "quantity": 3,
         "levelStart": 8,
         "levelEnd": 10
     },
     "Golgotha": {
         "parent": "Grit Gate",
-        "unlock": "Barathrumite Token",
+        "unlock": "Progressive Main Quest",
+        "quantity": 4,
         "levelStart": 10,
         "levelEnd": 12
     },
     "Grit Gate 2": {
         "parent": "Golgotha",
-        "unlock": "Waydroid Repair Kit",
+        "unlock": "Progressive Main Quest",
+        "quantity": 5,
         "levelStart": 12,
         "levelEnd": 15
     },
@@ -46,19 +51,22 @@
     },
     "Bethesda Susa": {
         "parent": "Grit Gate 2",
-        "unlock": "Eschaton Transcoder",
+        "unlock": "Progressive Main Quest",
+        "quantity": 6,
         "levelStart": 15,
         "levelEnd": 18
     },
     "Bethesda Susa 2": {
         "parent": "Bethesda Susa",
-        "unlock": "Baetyl Optronic Adapter",
+        "unlock": "Progressive Main Quest",
+        "quantity": 7,
         "levelStart": 18,
         "levelEnd": 20
     },
     "Omonporch": {
         "parent": "Bethesda Susa 2",
-        "unlock": "Consortium Token",
+        "unlock": "Progressive Main Quest",
+        "quantity": 8,
         "levelStart": 20,
         "levelEnd": 25
     },

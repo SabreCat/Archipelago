@@ -1,6 +1,6 @@
 {
     "game": "Caves of Qud",
     "minimum_ap_version": "0.6.6",
-    "world_version": "0.7.4",
+    "world_version": "0.8.1",
     "authors": ["lonesurv1vor, SabreCat"]
 }

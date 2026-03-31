@@ -13,6 +13,7 @@ class CoQRegionData(NamedTuple):
     name: str
     parent: str
     unlock: str
+    quantity: int
     level_start: int
     level_end: int
 
@@ -23,6 +24,7 @@ all_regions: Dict[str, CoQRegionData] = {
         name=name,
         parent=region["parent"],
         unlock=region["unlock"] if "unlock" in region else "",
+        quantity=region["quantity"] if "quantity" in region else 0,
         level_start=region["levelStart"] if "levelStart" in region else 0,
         level_end=region["levelEnd"] if "levelEnd" in region else 0,
     )
@@ -32,7 +34,7 @@ all_regions: Dict[str, CoQRegionData] = {
 def add_level_locations(world: "CoQWorld", region: Region, start: int, end: int):
     for level in range(start, end):
         for loc_name in Locations.xp_locations(
-            level, level + 1, world.options.locations_per_level
+            level, level + 1, world.options.locations_per_level.value
         ):
             if level > Quests.max_level(world): break
             level_loc = Locations.CoQLocation(
@@ -48,7 +50,7 @@ def add_quests(world: "CoQWorld"):
     for quest_name in Quests.quest_keys(world):
         region = world.get_region(Quests.quest_locations[quest_name].region)
 
-        if quest_name == Quests.goal_lookup[world.options.goal]:
+        if quest_name == Quests.goal_lookup[world.options.goal.value].quest_step:
             # Add victory event instead of normal location
             quest_loc = Locations.CoQLocation(world.player, quest_name, None, region)
             quest_loc.place_locked_item(
@@ -98,7 +100,10 @@ def create_regions(world: "CoQWorld"):
         world.multiworld.regions += [new_region]
         parent_region = world.get_region(region.parent)
         entrance_name = f"{parent_region.name} to {region.name}"
-        if region.unlock and region.unlock != "":
+        if region.unlock and region.unlock != "" and region.quantity > 0:
+            parent_region.connect(new_region, entrance_name, lambda state, region=region:
+                                  state.has(region.unlock, world.player, region.quantity))
+        elif region.unlock and region.unlock != "":
             parent_region.connect(new_region, entrance_name, lambda state, region=region:
                                   state.has(region.unlock, world.player))
         else:
