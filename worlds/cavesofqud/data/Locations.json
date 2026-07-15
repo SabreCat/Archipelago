@@ -98,13 +98,13 @@
     "Corpus Choliys": {
         "type": "lore",
         "blueprint": "Corpus",
-        "minLevel": 10,
+        "minLevel": 11,
         "region": "Kyakukya"
     },
     "Crumpled sheet of paper": {
         "type": "lore",
         "blueprint": "Sonnet",
-        "minLevel": 10,
+        "minLevel": 11,
         "region": "Bey Lah"
     },
     "Ruin of House Isner": {

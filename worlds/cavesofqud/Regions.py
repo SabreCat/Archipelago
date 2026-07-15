@@ -65,16 +65,16 @@ def add_quests(world: "CoQWorld"):
         quest_loc.access_rule = lambda state, quest_name=quest_name: Items.has_enough_stats_for_level(
             Quests.quest_locations[quest_name].level, state, world
         )
-        quest_loc.progress_type = LocationProgressType.PRIORITY
+        quest_loc.progress_type = LocationProgressType.DEFAULT
         region.locations += [quest_loc]
 
 def add_static_locations(world: "CoQWorld"):
     for quest in [
         k
         for k in Locations.static_locations.values()
-        if k.type == "delivery" or k.type == "lore"
-           or (k.type == "artifact" and world.options.lost_artifacts)
-           and k.min_level <= Quests.max_level(world)
+        if k.min_level <= Quests.max_level(world)
+           and (k.type == "delivery" or k.type == "lore"
+           or (k.type == "artifact" and world.options.lost_artifacts))
     ]:
         region = world.get_region(quest.region)
         quest_loc = Locations.CoQLocation(
@@ -83,8 +83,7 @@ def add_static_locations(world: "CoQWorld"):
         quest_loc.access_rule = lambda state, quest=quest: Items.has_enough_stats_for_level(
             quest.min_level, state, world
         )
-        quest_loc.progress_type = LocationProgressType.PRIORITY if (quest.type == "lore"
-            ) else LocationProgressType.DEFAULT
+        quest_loc.progress_type = LocationProgressType.DEFAULT
         region.locations += [quest_loc]
 
 def create_regions(world: "CoQWorld"):

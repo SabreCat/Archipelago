@@ -44,11 +44,11 @@ stat_items = [
     "Cybernetic Implant",
 ]
 
-unlock_items = [
-    "Water Farmer Token",
-    "Hindren Token",
-    "Kyakukya Token",
-]
+unlock_items = {
+    "Water Farmer Token": 1,
+    "Hindren Token": 11,
+    "Kyakukya Token": 15,
+}
 
 all_items: Iterable[str] = [
     main_quest_item,
@@ -150,15 +150,16 @@ def create_items(world: "CoQWorld"):
         i += 1
 
     # Side quest unlock items
-    for item in unlock_items:
-        item_pool += [
-            CoQItem(
-                item,
-                ItemClassification.progression,
-                world.item_name_to_id[item],
-                world.player,
-            )
-        ]
+    for item, level in unlock_items.items():
+        if level <= Quests.max_level(world):
+            item_pool += [
+                CoQItem(
+                    item,
+                    ItemClassification.progression,
+                    world.item_name_to_id[item],
+                    world.player,
+                )
+            ]
 
     # Stat ups from level ups
     for level in levelup_levels(Quests.max_level(world)):
