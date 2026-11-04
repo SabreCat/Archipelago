@@ -74,11 +74,15 @@ def stat_items_count(state: CollectionState, player: int) -> int:
 
 
 def has_enough_stats_for_level(target_level: int, world: "CoQWorld") -> rules.Rule:
+    """
+    Rule asserting that the player has collected stats roughly equivalent to
+    reaching `target_level`.
+    """
     return rules.HasFromList(
         *stat_items,
         count=sum(
             len(stat_items_on_levelup(lvl, world))
-            for lvl in range(2,min(target_level, Quests.max_level(world)))
+            for lvl in range(2,min(target_level, Quests.max_level(world))+1)
         ),
     )
 
