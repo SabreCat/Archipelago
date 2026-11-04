@@ -3,6 +3,7 @@ import pkgutil
 from typing import TYPE_CHECKING, Dict, NamedTuple
 
 from BaseClasses import LocationProgressType, Region
+from rule_builder import rules
 
 from . import Items, Locations, Quests
 
@@ -40,9 +41,7 @@ def add_level_locations(world: "CoQWorld", region: Region, start: int, end: int)
             level_loc = Locations.CoQLocation(
                 world.player, loc_name, world.location_name_to_id[loc_name], region
             )
-            level_loc.access_rule = lambda state, level=level: Items.has_enough_stats_for_level(
-                level, state, world
-            )
+            world.set_rule(level_loc, Items.has_enough_stats_for_level(level, world))
             level_loc.progress_type = LocationProgressType.DEFAULT
             region.locations += [level_loc]
 
@@ -62,8 +61,9 @@ def add_quests(world: "CoQWorld"):
             quest_loc = Locations.CoQLocation(
                 world.player, quest_name, world.location_name_to_id[quest_name], region
             )
-        quest_loc.access_rule = lambda state, quest_name=quest_name: Items.has_enough_stats_for_level(
-            Quests.quest_locations[quest_name].level, state, world
+        world.set_rule(
+            quest_loc,
+            Items.has_enough_stats_for_level(Quests.quest_locations[quest_name].level, world),
         )
         quest_loc.progress_type = LocationProgressType.DEFAULT
         region.locations += [quest_loc]
@@ -80,19 +80,22 @@ def add_static_locations(world: "CoQWorld"):
         quest_loc = Locations.CoQLocation(
             world.player, quest.name, world.location_name_to_id[quest.name], region
         )
-        quest_loc.access_rule = lambda state, quest=quest: Items.has_enough_stats_for_level(
-            quest.min_level, state, world
-        )
+        world.set_rule(quest_loc, Items.has_enough_stats_for_level(quest.min_level, world))
         quest_loc.progress_type = LocationProgressType.DEFAULT
         region.locations += [quest_loc]
 
 def create_regions(world: "CoQWorld"):
+    total_main_quest_items = Items.total_main_quest_progression_items(world)
+    max_level = Quests.max_level(world)
+
     # Default always-reachable region
     menu = Region("Menu", world.player, world.multiworld)
     world.multiworld.regions += [menu]
 
     # Qud regions, based around quests
     for region in all_regions.values():
+        if max_level < region.level_start:
+            continue
         new_region = Region(region.name, world.player, world.multiworld)
         if region.level_start > 0 and region.level_end > 0:
             add_level_locations(world, new_region, region.level_start, region.level_end)
@@ -100,13 +103,28 @@ def create_regions(world: "CoQWorld"):
         parent_region = world.get_region(region.parent)
         entrance_name = f"{parent_region.name} to {region.name}"
         if region.unlock and region.unlock != "" and region.quantity > 0:
-            parent_region.connect(new_region, entrance_name, lambda state, region=region:
-                                  state.has(region.unlock, world.player, region.quantity))
+            item_quantity = region.quantity
+            if region.unlock == Items.main_quest_item:
+                item_quantity = min(item_quantity, total_main_quest_items)
+            world.create_entrance(
+                from_region=parent_region,
+                to_region=new_region,
+                name=entrance_name,
+                rule=rules.Has(region.unlock, item_quantity),
+            )
         elif region.unlock and region.unlock != "":
-            parent_region.connect(new_region, entrance_name, lambda state, region=region:
-                                  state.has(region.unlock, world.player))
+            world.create_entrance(
+                from_region=parent_region,
+                to_region=new_region,
+                name=entrance_name,
+                rule=rules.Has(region.unlock),
+            )
         else:
-            parent_region.connect(new_region, entrance_name)
-    
+            world.create_entrance(
+                from_region=parent_region,
+                to_region=new_region,
+                name=entrance_name,
+            )
+
     add_quests(world)
     add_static_locations(world)

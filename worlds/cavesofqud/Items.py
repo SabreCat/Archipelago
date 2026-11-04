@@ -3,6 +3,7 @@ import pkgutil
 from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple
 
 from BaseClasses import CollectionState, Item, ItemClassification
+from rule_builder import rules
 
 from . import Options, Quests
 
@@ -72,12 +73,18 @@ def stat_items_count(state: CollectionState, player: int) -> int:
     return sum([state.count(item, player) for item in stat_items])
 
 
-def has_enough_stats_for_level(
-    level: int, state: CollectionState, world: "CoQWorld"
-) -> bool:
-    return stat_items_count(state, world.player) / stat_items_total(
-        Quests.max_level(world), world
-    ) >= (level - 1) / Quests.max_level(world)
+def has_enough_stats_for_level(target_level: int, world: "CoQWorld") -> rules.Rule:
+    """
+    Rule asserting that the player has collected stats roughly equivalent to
+    reaching `target_level`.
+    """
+    return rules.HasFromList(
+        *stat_items,
+        count=sum(
+            len(stat_items_on_levelup(lvl, world))
+            for lvl in range(2,min(target_level, Quests.max_level(world))+1)
+        ),
+    )
 
 
 def stat_items_on_levelup(level: int, world: "CoQWorld") -> list[str]:
@@ -132,13 +139,17 @@ def create_filler_item(world: "CoQWorld") -> CoQItem:
     )
 
 
+def total_main_quest_progression_items(world: "CoQWorld"):
+    return Quests.goal_lookup[world.options.goal.value].progression
+
+
 def create_items(world: "CoQWorld"):
     item_pool: List[CoQItem] = []
     total_locations = len(world.multiworld.get_unfilled_locations(world.player))
 
     # Progressive main quest
     i = 1
-    while i <= Quests.goal_lookup[world.options.goal.value].progression:
+    while i <= total_main_quest_progression_items(world):
         item_pool += [
             CoQItem(
                 main_quest_item,
@@ -180,7 +191,7 @@ def create_any_item_static(world: "CoQWorld", name: str) -> Item:
             if data.category == "trap"
             else ItemClassification.filler
         )
-    elif name in stat_items or name in unlock_items:
+    elif name in stat_items or name in unlock_items or name == main_quest_item:
         classification = ItemClassification.progression
     else:
         raise Exception(f"Item {name} couldn't be found in item definitions")
