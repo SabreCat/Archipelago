@@ -31,9 +31,11 @@ class CoQWorld(World):
     # World gen calls
 
     def fill_slot_data(self) -> dict:
-        return self.options.as_dict(
+        slot_data = self.options.as_dict(
             *[name for name in self.options_dataclass.type_hints.keys()]
         )
+        slot_data["world_version"] = '.'.join(str(v) for v in self.world_version)
+        return slot_data
 
     def create_regions(self):
         Regions.create_regions(self)
